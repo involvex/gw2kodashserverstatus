@@ -1,5 +1,6 @@
 <html>
 <script type="text/javascript">
+   window.onload = function () {
 var request = new XMLHttpRequest()
 request.open('GET', 'https://api.guildwars2.com/v2/worlds?lang=de&ids=2201', true)
 request.onload = function() {
@@ -13,5 +14,6 @@ request.onload = function() {
   }
 }
 request.send()
+}
 </script>
 </html>
