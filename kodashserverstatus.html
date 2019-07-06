@@ -1,20 +1,94 @@
-<html>
+<!DOCTYPE html>
+<html lang="de">
+ <head>
+<!--
+Sende mir eine Email wenn Platz auf dem Server ist.
+
+<form>
+<input type="email" placeholder="Email">
+<input type="submit" value="Absenden">
+</form>
+-->
 <script type="text/javascript">
+
+
+
 window.onload = function () {
+var serverpop = "Full";
+var serverpoptransl = "Voll";
 var request = new XMLHttpRequest()
 request.open('GET', 'https://api.guildwars2.com/v2/worlds?lang=de&ids=2201', true)
 request.onload = function() {
-  var data = JSON.parse(this.response)
+var data = JSON.parse(this.response)
 
   for (var i = 0; i < data.length; i++) {
-	var apireturn = data[i].name + ' ist ' + data[i].population + '.'
-    console.log( apireturn)
-	document.write(apireturn)
+  var serverpop = data[0].population;
+	if(serverpop == "Full"){
+		serverpoptransl = "Voll";
+	} else if(serverpop == "VeryHigh"){
+		serverpoptransl = "Sehr Hoch";
+	} else if(serverpop == "High"){
+	  serverpoptransl = "Hoch";
+	}
+	var apireturn = data[0].name + ' ist ' + serverpoptransl + '.';
+
+    console.log( apireturn);
+	document.getElementById("serverstat").innerHTML = apireturn;
 	var time = new Date().toLocaleTimeString();
-	document.write("<br>Letzte Aktualisierung: ", time)
+	document.getElementById("lastrefresh").innerHTML = "Letzte Aktualisierung: " + time;
   }
 }
 request.send()
+
+
+if(serverpop != "Full"){
+	serverfree();
 }
+
+}
+
+
+function notifyMe() {
+	Notification.requestPermission();
+	if (!("Notification" in window)) {
+    console.log("This browser does not support desktop notification");
+  }
+
+  // Let's check whether notification permissions have alredy been granted
+  else if (Notification.permission === "granted") {
+    // If it's okay let's create a notification
+    var notification = new Notification("Benachrichtigung aktiviert!");
+  }
+
+  // Otherwise, we need to ask the user for permission
+  else if (Notification.permission !== 'denied' || Notification.permission === "default") {
+    Notification.requestPermission(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        var notification = new Notification("Benachrichtigung aktiviert!");
+      }
+    });
+  }
+
+    //var notification = new Notification("Benachrichtigung aktiviert!");
+}
+
+function serverfree(){
+	var notification = new Notification("Kodash hat jetzt Platz fuer dich!");
+}
+
+setInterval(function() {
+                  window.location.reload();
+                }, 300000);
 </script>
+</head>
+<body>
+<div id="serverstat"></div>
+<div id="lastrefresh"></div>
+<br>
+
+
+<button onclick="notifyMe()">Benachrichtige mich!</button>
+
+</body>
 </html>
