@@ -1,0 +1,16 @@
+<html>
+<script type="text/javascript">
+var request = new XMLHttpRequest()
+request.open('GET', 'https://api.guildwars2.com/v2/worlds?lang=de&ids=2201', true)
+request.onload = function() {
+  var data = JSON.parse(this.response)
+
+  for (var i = 0; i < data.length; i++) {
+	var apireturn = data[i].name + ' ist ' + data[i].population + '.'
+    console.log( apireturn)
+	document.write(apireturn)
+  }
+}
+request.send()
+</script>
+</html>
