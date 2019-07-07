@@ -1,45 +1,56 @@
 <!DOCTYPE html>
 <html lang="de">
  <head>
-<title>Kodash ServerPlatz Notifier</title>
+<!--
+Sende mir eine Email wenn Platz auf dem Server ist.
+
+<form>
+<input type="email" placeholder="Email">
+<input type="submit" value="Absenden">
+</form>
+-->
 <script type="text/javascript">
 
 
 
 window.onload = function () {
-var serverpop = "Full";
-var serverpoptransl = "Voll";
-var request = new XMLHttpRequest()
-request.open('GET', 'https://api.guildwars2.com/v2/worlds?lang=de&ids=2201', true)
-request.onload = function() {
-var data = JSON.parse(this.response)
+jssetup();
+}
+function jssetup(){
+	var serverpop = "Full";
+	var serverpoptransl = "Voll";
+	var request = new XMLHttpRequest()
+	request.open('GET', 'https://api.guildwars2.com/v2/worlds?lang=de&ids=2201', true)
+	request.onload = function() {
+	var data = JSON.parse(this.response)
 
-  for (var i = 0; i < data.length; i++) {
-  var serverpop = data[0].population;
-	if(serverpop == "Full"){
-		serverpoptransl = "Voll";
-	} else if(serverpop == "VeryHigh"){
-		serverpoptransl = "Sehr Hoch";
-	} else if(serverpop == "High"){
-	  serverpoptransl = "Hoch";
+	  for (var i = 0; i < data.length; i++) {
+	  var serverpop = data[0].population;
+		if(serverpop == "Full"){
+			serverpoptransl = "Voll";
+		} else if(serverpop == "VeryHigh"){
+			serverpoptransl = "Sehr Hoch";
+		} else if(serverpop == "High"){
+		  serverpoptransl = "Hoch";
+		}
+		var apireturn = data[0].name + ' ist ' + serverpoptransl + '.';
+
+		console.log( apireturn);
+		document.getElementById("serverstat").innerHTML = apireturn;
+		var time = new Date().toLocaleTimeString();
+		document.getElementById("lastrefresh").innerHTML = "Letzte Aktualisierung: " + time;
+	  }
 	}
-	var apireturn = data[0].name + ' ist ' + serverpoptransl + '.';
-
-    console.log( apireturn);
-	document.getElementById("serverstat").innerHTML = apireturn;
-	var time = new Date().toLocaleTimeString();
-	document.getElementById("lastrefresh").innerHTML = "Letzte Aktualisierung: " + time;
-  }
-}
-request.send()
+	request.send()
 
 
-if(serverpop != "Full"){
-	serverfree();
-}
+	if(serverpop != "Full"){
+		serverfree();
+	}
+
+
 
 }
-
 
 function notifyMe() {
 	Notification.requestPermission();
@@ -71,11 +82,16 @@ function serverfree(){
 }
 
 setInterval(function() {
-                  window.location.reload();
+					jssetup();
+                  //window.location.reload();
+				  //var oldhtml = document.getElementById("torefresh").innerHTML;
+				  //console.log(oldhtml);
+				  //document.getElementById("torefresh").innerHTML = oldhtml;
                 }, 300000);
 </script>
 </head>
-<body>
+
+<body id="torefresh">
 <div id="serverstat"></div>
 <div id="lastrefresh"></div>
 <br>
