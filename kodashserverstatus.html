@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
  <head>
-   <title>Kodash Server Status!</title>
+ <title>Kodash Server Status</title>
 <!--
 Sende mir eine Email wenn Platz auf dem Server ist.
 
@@ -13,7 +13,7 @@ Sende mir eine Email wenn Platz auf dem Server ist.
 <script type="text/javascript">
 
 
-
+var notifsend = 0;
 window.onload = function () {
 jssetup();
 }
@@ -21,19 +21,14 @@ function jssetup(){
 	var serverpop = "Full";
 	var serverpoptransl = "Voll";
 	var request = new XMLHttpRequest()
+
 	request.open('GET', 'https://api.guildwars2.com/v2/worlds?lang=de&ids=2201', true)
 	request.onload = function() {
 	var data = JSON.parse(this.response)
 
 	  for (var i = 0; i < data.length; i++) {
-	  var serverpop = data[0].population;
-		if(serverpop == "Full"){
-			serverpoptransl = "Voll";
-		} else if(serverpop == "VeryHigh"){
-			serverpoptransl = "Sehr Hoch";
-		} else if(serverpop == "High"){
-		  serverpoptransl = "Hoch";
-		}
+	  serverpop = data[0].population;
+
 		var apireturn = data[0].name + ' ist ' + serverpop + '.';
 
 		console.log( apireturn);
@@ -41,13 +36,16 @@ function jssetup(){
 		var time = new Date().toLocaleTimeString();
 		document.getElementById("lastrefresh").innerHTML = "Letzte Aktualisierung: " + time;
 	  }
+	if(notifsend == 0){
+		if(serverpop != "Full"){
+			serverfree();
+		}
+	}
+
 	}
 	request.send()
 
 
-	if(serverpop != "Full"){
-		serverfree();
-	}
 
 
 
@@ -80,6 +78,8 @@ function notifyMe() {
 
 function serverfree(){
 	var notification = new Notification("Kodash hat jetzt Platz fuer dich!");
+	notifsend = 1;
+	console.log("Notification status:", notifsend);
 }
 
 setInterval(function() {
